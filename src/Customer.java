@@ -1,17 +1,20 @@
+
+
 public class Customer {
 
-    private int id;
+    private int customerID;
     private String name;
     private Portfolio portfolio;
 
-    public Customer(int id, String name) {
-        this.id = id;
+    // Constructor
+    public Customer(int customerID, String name) {
+        this.customerID = customerID;
         this.name = name;
         this.portfolio = new Portfolio();
     }
 
-    public int getId() {
-        return id;
+    public int getCustomerID() {
+        return customerID;
     }
 
     public String getName() {
