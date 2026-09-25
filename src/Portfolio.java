@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 
- // Portfolio class stores and manages all investments.
+ // Portfolio class stores and manages all investments
   //It uses an ArrayList of Investment objects so it can store
   //different investment types 
  
@@ -12,7 +12,7 @@ public class Portfolio {
 
     // Constructor
     public Portfolio() {
-        investments = new ArrayList<>();
+        investments = new ArrayList<>(); //create actual arraylist
     }
 
     
@@ -31,43 +31,44 @@ public class Portfolio {
         return true;
     }
 
-   
+   //search for an investment using its symbol
     public Investment findInvestment(String symbol) {
 
     if (symbol == null) {
-        return null;
+        return null; //no investment was found
     }
 
-    for (Investment investment : investments) {
+    for (Investment investment : investments) { //for every investment
 
-        if (investment.getSymbol() != null
-                && investment.getSymbol().equalsIgnoreCase(symbol)) {
+        if (investment.getSymbol() != null //Make sure the current investment has a symbol
+                && investment.getSymbol().equalsIgnoreCase(symbol)) { //and that symbol matches the searched symbol
             return investment;
         }
     }
 
-    return null;
+    return null; //No matching investment was found
 }
 
-   
+   // this method remove the investment using its symbol
     public boolean removeInvestment(String symbol) {
 
-        Investment investment = findInvestment(symbol);
+        Investment investment = findInvestment(symbol); //reuse findinvestment method to chech whether an investment was found
 
-        if (investment != null) {
-            investments.remove(investment);
+        if (investment != null) { //if the object exist, remove it from the arraylist
+            investments.remove(investment); 
             return true;
         }
 
-        return false;
+        return false; //the investment was nof found
     }
 
     
     public double calculateTotalValue() {
 
-        double totalValue = 0;
+        double totalValue = 0; //creates a variable and starts from zero
 
         for (Investment investment : investments) {
+             //get the current value of each investment and adds it to the total
             totalValue += investment.getCurrentValue();
         }
 
@@ -77,7 +78,7 @@ public class Portfolio {
    
     public void displayAllInvestments() {
 
-        if (investments.isEmpty()) {
+        if (investments.isEmpty()) {  
             System.out.println("The portfolio has no investments.");
             return;
         }
@@ -94,8 +95,8 @@ public class Portfolio {
         return investments;
     }
 
-    // Returns the number of investments in the portfolio
+    // return how many investments currently stored in the portfolio
     public int getNumberOfInvestments() {
-        return investments.size();
+        return investments.size(); //returns the number of objects in the ArrayList
     }
 }
