@@ -14,7 +14,7 @@ public class PortfolioPro_MS {
 				case 3: SetUpdateInvestmentGoals(); break;	// 3-	Set or update investment goals.
 				case 4: AddInvestmentsFromFile(); break;	// 4-	Bulk addition of investments from a file.
 				case 5: ListAllInvestments(); break;		// 5-	List all investments in the portfolio of a selected customer and View progress toward investment goals.
-				case 6: CalculatePortfolioValue(); break;   // 6-	Calculate the total portfolio value for a selected customer.
+				case 6: CalculatePortfolioValue(); break;       // 6-	Calculate the total portfolio value for a selected customer.
 				case 7: ExtraFunctionality(); break;  		// 7-	Calculate the total portfolio value for a selected customer.
 
 				default:  System.out.println("Thank you for using CSC301's Investment Portfolio Management System, Have a Good Bye.");
