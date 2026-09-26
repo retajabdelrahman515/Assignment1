@@ -48,7 +48,7 @@ public class PortfolioPro_MS {
 				case 4: AddInvestmentsFromFile(customer1); break;	// 4-	Bulk addition of investments from a file.
 				case 5: ListAllInvestments(customer1); break;		// 5-	List all investments in the portfolio of a selected customer and View progress toward investment goals.
 				case 6: CalculatePortfolioValue(customer1); break;       // 6-	Calculate the total portfolio value for a selected customer.
-				case 7: ExtraFunctionality(); break;  		// 7-	Calculate the total portfolio value for a selected customer.
+				case 7: ExtraFunctionality(customer1); break;  		// 7-	Calculate the total portfolio value for a selected customer.
 
 				default:  System.out.println("Thank you for using CSC301's Investment Portfolio Management System, Have a Good Bye.");
 			}
@@ -65,7 +65,7 @@ public class PortfolioPro_MS {
 		System.out.println("4- Bulk addition of investments from a file.");
 		System.out.println("5- List all investments in the portfolio of a selected customer and View progress toward investment goals.");
 		System.out.println("6- Calculate the total portfolio value for a selected customer.");
-		System.out.println("7- ONE additional functionality of your choice. BE INNOVATIVE.");
+		System.out.println("7- Portfolio Health Analyzer");
 		System.out.println("0- Quit");
 		System.out.println("---------------------------------------------------------");
 	}
@@ -74,7 +74,7 @@ public class PortfolioPro_MS {
 		Scanner input = new Scanner(System.in);
 		int choice;
 		do {
-			System.out.println("Your choice (0, 1, 2, 3, 4, 5, 6, 7, 8, ...):");
+			System.out.println("Your choice (0, 1, 2, 3, 4, 5, 6, 7):");
 			choice = input.nextInt();
 		} while(choice > 7);
 		return choice;
@@ -269,7 +269,185 @@ public class PortfolioPro_MS {
             );
         }
         
-	public static void ExtraFunctionality(){
-		// To be completed. Feel free to change the input parameters. 
-	}
+	public static void ExtraFunctionality(Customer customer) {
+
+            Portfolio portfolio = customer.getPortfolio();
+
+            // Check if portfolio is empty
+            if (portfolio.getInvestments().isEmpty()) {
+                System.out.println("Portfolio has no investments to analyze.");
+                return;
+            }
+
+            double totalValue = 0;
+            double totalInvested = 0;
+
+            double stockValue = 0;
+            double bondValue = 0;
+            double mutualFundValue = 0;
+
+            int lowRisk = 0;
+            int mediumRisk = 0;
+            int highRisk = 0;
+
+            Investment bestInvestment = null;
+            Investment worstInvestment = null;
+
+
+            // Analyze all investments
+            for (Investment investment : portfolio.getInvestments()) {
+
+                double currentValue = investment.getCurrentValue();
+
+                totalValue += currentValue;
+                totalInvested += investment.getInvestmentAmount();
+
+
+                // Find best and worst investment based on ROI
+                if (bestInvestment == null ||
+                        investment.getROI() > bestInvestment.getROI()) {
+
+                    bestInvestment = investment;
+                }
+
+                if (worstInvestment == null ||
+                        investment.getROI() < worstInvestment.getROI()) {
+
+                    worstInvestment = investment;
+                }
+
+
+                // Calculate asset allocation
+                if (investment.getAssetType().equalsIgnoreCase("Stock")) {
+
+                    stockValue += currentValue;
+
+                } else if (investment.getAssetType().equalsIgnoreCase("Bond")) {
+
+                    bondValue += currentValue;
+
+                } else if (investment.getAssetType().equalsIgnoreCase("Mutual Fund")) {
+
+                    mutualFundValue += currentValue;
+                }
+
+
+                // Analyze risk levels
+                if (investment.getRiskLevel().equalsIgnoreCase("Low")) {
+
+                    lowRisk++;
+
+                } else if (investment.getRiskLevel().equalsIgnoreCase("Medium")) {
+
+                    mediumRisk++;
+
+                } else if (investment.getRiskLevel().equalsIgnoreCase("High")) {
+
+                    highRisk++;
+                }
+            }
+
+
+            // Overall portfolio profit/loss
+            double profitLoss = totalValue - totalInvested;
+
+            double overallROI = 0;
+
+            if (totalInvested > 0) {
+                overallROI = (profitLoss / totalInvested) * 100;
+            }
+
+
+            // Asset allocation percentages
+            double stockPercentage = (stockValue / totalValue) * 100;
+            double bondPercentage = (bondValue / totalValue) * 100;
+            double mutualFundPercentage = (mutualFundValue / totalValue) * 100;
+
+
+            // Display results
+            System.out.println("\n========== PORTFOLIO HEALTH ANALYSIS ==========");
+
+            System.out.println("Customer: " + customer.getName());
+
+            System.out.printf("Total Invested: $%.2f%n", totalInvested);
+            System.out.printf("Current Value:  $%.2f%n", totalValue);
+            System.out.printf("Profit/Loss:    $%.2f%n", profitLoss);
+            System.out.printf("Overall ROI:    %.2f%%%n", overallROI);
+
+
+            System.out.println("\n---------- PERFORMANCE ----------");
+
+            System.out.println(
+                    "Best Performer: " + bestInvestment.getName()
+            );
+
+            System.out.printf(
+                    "ROI: %.2f%%%n",
+                    bestInvestment.getROI()
+            );
+
+            System.out.println(
+                    "Worst Performer: " + worstInvestment.getName()
+            );
+
+            System.out.printf(
+                    "ROI: %.2f%%%n",
+                    worstInvestment.getROI()
+            );
+
+
+            System.out.println("\n---------- ASSET ALLOCATION ----------");
+
+            System.out.printf("Stocks:       %.2f%%%n", stockPercentage);
+            System.out.printf("Bonds:        %.2f%%%n", bondPercentage);
+            System.out.printf("Mutual Funds: %.2f%%%n", mutualFundPercentage);
+
+
+            System.out.println("\n---------- RISK ANALYSIS ----------");
+
+            System.out.println("Low Risk:    " + lowRisk);
+            System.out.println("Medium Risk: " + mediumRisk);
+            System.out.println("High Risk:   " + highRisk);
+
+
+            System.out.println("\n---------- HEALTH WARNINGS ----------");
+
+            if (stockPercentage > 70) {
+                System.out.println(
+                        "Warning: Portfolio is heavily concentrated in stocks."
+                );
+            }
+
+            if (bondPercentage > 70) {
+                System.out.println(
+                        "Warning: Portfolio is heavily concentrated in bonds."
+                );
+            }
+
+            if (mutualFundPercentage > 70) {
+                System.out.println(
+                        "Warning: Portfolio is heavily concentrated in mutual funds."
+                );
+            }
+
+            if (highRisk > portfolio.getNumberOfInvestments() / 2) {
+                System.out.println(
+                        "Warning: More than half of the investments are high risk."
+                );
+            }
+
+            if (stockValue == 0) {
+                System.out.println("Warning: No stock investments.");
+            }
+
+            if (bondValue == 0) {
+                System.out.println("Warning: No bond investments.");
+            }
+
+            if (mutualFundValue == 0) {
+                System.out.println("Warning: No mutual fund investments.");
+            }
+
+            System.out.println("===============================================");
+        }
 }
