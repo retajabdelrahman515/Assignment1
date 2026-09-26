@@ -447,7 +447,5 @@ public class PortfolioPro_MS {
             if (mutualFundValue == 0) {
                 System.out.println("Warning: No mutual fund investments.");
             }
-
-            System.out.println("===============================================");
         }
 }
