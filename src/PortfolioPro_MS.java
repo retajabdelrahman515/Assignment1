@@ -1,7 +1,10 @@
 import java.time.LocalDate;
 import java.util.Scanner;
-//Hiiiiiiii
-//Engineer Layan was heree
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.format.DateTimeParseException;
+
 public class PortfolioPro_MS {
 	public static void main(String[] args) {
         
@@ -246,8 +249,159 @@ public class PortfolioPro_MS {
             System.out.println("Investment goal saved successfully.");
         }
 
-	public static void AddInvestmentsFromFile(Customer customer){
-	}
+	public static void AddInvestmentsFromFile(Customer customer) {
+
+    Scanner input = new Scanner(System.in);
+
+    System.out.println("\n--- Bulk Add Investments From File ---");
+    System.out.print("Enter file path: ");
+
+    String filePath = input.nextLine();
+
+    int addedCount = 0;
+    int skippedCount = 0;
+    int lineNumber = 0;
+
+    try (BufferedReader reader =
+            new BufferedReader(new FileReader(filePath))) {
+
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+
+            lineNumber++;
+
+            // Skip empty lines
+            if (line.trim().isEmpty()) {
+                continue;
+            }
+
+            try {
+
+                Investment investment =
+                        createInvestmentFromFile(line);
+
+                if (customer.getPortfolio()
+                        .addInvestment(investment)) {
+
+                    addedCount++;
+
+                } else {
+
+                    skippedCount++;
+
+                    System.out.println(
+                            "Line " + lineNumber
+                            + " skipped: duplicate symbol.");
+                }
+
+            } catch (NumberFormatException e) {
+
+                skippedCount++;
+
+                System.out.println(
+                        "Line " + lineNumber
+                        + " skipped: invalid numeric value.");
+
+            } catch (DateTimeParseException e) {
+
+                skippedCount++;
+
+                System.out.println(
+                        "Line " + lineNumber
+                        + " skipped: invalid date format.");
+
+            } catch (IllegalArgumentException e) {
+
+                skippedCount++;
+
+                System.out.println(
+                        "Line " + lineNumber
+                        + " skipped: " + e.getMessage());
+            }
+        }
+
+        System.out.println("\nBulk addition completed.");
+        System.out.println("Investments added: " + addedCount);
+        System.out.println("Investments skipped: " + skippedCount);
+
+    } catch (IOException e) {
+
+        System.out.println(
+                "Error reading the file: " + e.getMessage());
+    }
+}
+        public static Investment createInvestmentFromFile(String line) {
+
+    String[] data = line.split(",");
+
+    String type = data[0].trim();
+
+    if (type.equalsIgnoreCase("Stock")) {
+
+        if (data.length != 10) {
+            throw new IllegalArgumentException(
+                    "Invalid Stock data.");
+        }
+
+        return new Stock(
+                data[1].trim(),                        // symbol
+                data[2].trim(),                        // name
+                Double.parseDouble(data[3].trim()),    // quantity
+                Double.parseDouble(data[4].trim()),    // purchase price
+                Double.parseDouble(data[5].trim()),    // current price
+                LocalDate.parse(data[6].trim()),       // purchase date
+                data[7].trim(),                        // risk level
+                data[8].trim(),                        // exchange
+                Double.parseDouble(data[9].trim())     // dividend
+        );
+
+    } else if (type.equalsIgnoreCase("Bond")) {
+
+        if (data.length != 11) {
+            throw new IllegalArgumentException(
+                    "Invalid Bond data.");
+        }
+
+        return new Bond(
+                data[1].trim(),                         // symbol
+                data[2].trim(),                         // name
+                Double.parseDouble(data[3].trim()),     // quantity
+                Double.parseDouble(data[4].trim()),     // purchase price
+                Double.parseDouble(data[5].trim()),     // current price
+                LocalDate.parse(data[6].trim()),        // purchase date
+                data[7].trim(),                         // risk level
+                Double.parseDouble(data[8].trim()),     // interest rate
+                LocalDate.parse(data[9].trim()),        // maturity date
+                Double.parseDouble(data[10].trim())     // face value
+        );
+
+    } else if (type.equalsIgnoreCase("MutualFund")
+            || type.equalsIgnoreCase("Mutual Fund")) {
+
+        if (data.length != 10) {
+            throw new IllegalArgumentException(
+                    "Invalid Mutual Fund data.");
+        }
+
+        return new MutualFund(
+                data[1].trim(),                        // symbol
+                data[2].trim(),                        // name
+                Double.parseDouble(data[3].trim()),    // quantity
+                Double.parseDouble(data[4].trim()),    // purchase price
+                Double.parseDouble(data[5].trim()),    // current price
+                LocalDate.parse(data[6].trim()),       // purchase date
+                data[7].trim(),                        // risk level
+                data[8].trim(),                        // fund manager
+                Double.parseDouble(data[9].trim())     // expense ratio
+        );
+
+    } else {
+
+        throw new IllegalArgumentException(
+                "Unknown investment type: " + type);
+    }
+}
 
 	public static void ListAllInvestments(Customer customer) {
 
