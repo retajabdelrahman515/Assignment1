@@ -1,9 +1,43 @@
+import java.time.LocalDate;
 import java.util.Scanner;
 //Hiiiiiiii
 //Engineer Layan was heree
 public class PortfolioPro_MS {
 	public static void main(String[] args) {
-	
+        
+                
+            Customer customer1 = new Customer(2, "Aya"); // Customer Aya has an ID: 2
+            Customer customer2 = new Customer(4, "Zayed"); // Customer Zayed has an ID: 4
+            
+            customer1.getPortfolio().addInvestment(
+                new Stock(
+                    "AAPL",
+                    "Apple",
+                    10,
+                    150,
+                    200,
+                    LocalDate.of(2026, 1, 10),
+                    "Medium",
+                    "NASDAQ",
+                    1.00
+                )
+            );
+
+            customer1.getPortfolio().addInvestment(
+                new Bond(
+                    "B001",
+                    "Government Bond",
+                    5,
+                    1000,
+                    1050,
+                    LocalDate.of(2026, 2, 15),
+                    "Low",
+                    5.0,
+                    LocalDate.of(2030, 2, 15),
+                    1000
+                )
+            );
+            
 		int userChoice;
 		do {
 			DislayMenu();
