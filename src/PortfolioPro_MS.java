@@ -7,7 +7,6 @@ public class PortfolioPro_MS {
         
                 
             Customer customer1 = new Customer(2, "Aya"); // Customer Aya has an ID: 2
-            Customer customer2 = new Customer(4, "Zayed"); // Customer Zayed has an ID: 4
             
             customer1.getPortfolio().addInvestment(
                 new Stock(
@@ -43,12 +42,12 @@ public class PortfolioPro_MS {
 			DislayMenu();
 			userChoice = UserMenuChoice();
 			switch (userChoice) {
-				case 1: AddInvestmentToPortfolio(); break; 	// 1-	Add a new investment to a portfolio. 
-				case 2: UpdateInvestmentDetails(); break;	// 2-	Update investment details (quantity, purchase price, ...).
-				case 3: SetUpdateInvestmentGoals(); break;	// 3-	Set or update investment goals.
-				case 4: AddInvestmentsFromFile(); break;	// 4-	Bulk addition of investments from a file.
-				case 5: ListAllInvestments(); break;		// 5-	List all investments in the portfolio of a selected customer and View progress toward investment goals.
-				case 6: CalculatePortfolioValue(); break;       // 6-	Calculate the total portfolio value for a selected customer.
+				case 1: AddInvestmentToPortfolio(customer1); break; 	// 1-	Add a new investment to a portfolio. 
+				case 2: UpdateInvestmentDetails(customer1); break;	// 2-	Update investment details (quantity, purchase price, ...).
+				case 3: SetUpdateInvestmentGoals(customer1); break;	// 3-	Set or update investment goals.
+				case 4: AddInvestmentsFromFile(customer1); break;	// 4-	Bulk addition of investments from a file.
+				case 5: ListAllInvestments(customer1); break;		// 5-	List all investments in the portfolio of a selected customer and View progress toward investment goals.
+				case 6: CalculatePortfolioValue(customer1); break;       // 6-	Calculate the total portfolio value for a selected customer.
 				case 7: ExtraFunctionality(); break;  		// 7-	Calculate the total portfolio value for a selected customer.
 
 				default:  System.out.println("Thank you for using CSC301's Investment Portfolio Management System, Have a Good Bye.");
@@ -81,29 +80,195 @@ public class PortfolioPro_MS {
 		return choice;
 	}
 	
-	public static void AddInvestmentToPortfolio(){
-		// To be completed. Feel free to change the input parameters. 
-	}
+	public static void AddInvestmentToPortfolio(Customer customer){
 
-	public static void UpdateInvestmentDetails(){
-		// To be completed. Feel free to change the input parameters.  
-	}
+            Scanner input = new Scanner(System.in);
+            
+            System.out.println("\n Add Investment ");
+            System.out.println("1- Stock");
+            System.out.println("2- Bond");
+            System.out.println("3- Mutual Fund");
+            System.out.print("Choose investment type: ");
+            int type = input.nextInt();
+            input.nextLine();
 
-	public static void SetUpdateInvestmentGoals(){
-		// To be completed. Feel free to change the input parameters.  
-	}
+            System.out.print("Symbol: ");
+            String symbol = input.nextLine();
 
-	public static void AddInvestmentsFromFile(){
-	}
+            System.out.print("Name: ");
+            String name = input.nextLine();
 
-	public static void ListAllInvestments(){
-		// To be completed. Feel free to change the input parameters. 
-	}
+            System.out.print("Quantity: ");
+            double quantity = input.nextDouble();
+
+            System.out.print("Purchase price: ");
+            double purchasePrice = input.nextDouble();
+
+            System.out.print("Current price: ");
+            double currentPrice = input.nextDouble();
+
+            input.nextLine();
+
+            System.out.print("Risk level: ");
+            String riskLevel = input.nextLine();
+
+            LocalDate purchaseDate = LocalDate.now();
+
+            Investment investment = null;
+
+            switch (type){
+                case 1:
+
+                System.out.print("Exchange: ");
+                String exchange = input.nextLine();
+
+                System.out.print("Dividend per share: ");
+                double dividend = input.nextDouble();
+
+                investment = new Stock(
+                        symbol, name, quantity,
+                        purchasePrice, currentPrice,
+                        purchaseDate, riskLevel,
+                        exchange, dividend
+                );
+                break;
+                
+                case 2:
+
+                System.out.print("Interest rate: ");
+                double interestRate = input.nextDouble();
+
+                System.out.print("Maturity year: ");
+                int year = input.nextInt();
+
+                System.out.print("Maturity month: ");
+                int month = input.nextInt();
+
+                System.out.print("Maturity day: ");
+                int day = input.nextInt();
+
+                System.out.print("Face value: ");
+                double faceValue = input.nextDouble();
+
+                investment = new Bond(
+                        symbol, name, quantity,
+                        purchasePrice, currentPrice,
+                        purchaseDate, riskLevel,
+                        interestRate,
+                        LocalDate.of(year, month, day),
+                        faceValue
+                );
+                break;
+                
+                case 3:
+
+                input.nextLine();
+
+                System.out.print("Fund manager: ");
+                String manager = input.nextLine();
+
+                System.out.print("Expense ratio: ");
+                double expenseRatio = input.nextDouble();
+
+                investment = new MutualFund(
+                        symbol, name, quantity,
+                        purchasePrice, currentPrice,
+                        purchaseDate, riskLevel,
+                        manager, expenseRatio
+                );
+                break;
+
+                default:
+                System.out.println("Invalid investment type.");
+                return;
+            }
+
+            if (customer.getPortfolio().addInvestment(investment)) {
+                System.out.println("Investment added successfully.");
+            } else {
+                System.out.println("Investment could not be added. Symbol may already exist.");
+            }
+        }
 	
-	public static void CalculatePortfolioValue(){
-		// To be completed. Feel free to change the input parameters. 
+
+	public static void UpdateInvestmentDetails(Customer customer) {
+
+            Scanner input = new Scanner(System.in);
+
+            System.out.println("\n--- Update Investment ---");
+
+            System.out.print("Enter investment symbol: ");
+            String symbol = input.nextLine();
+
+            Investment investment =
+                    customer.getPortfolio().findInvestment(symbol);
+
+            if (investment == null) {
+                System.out.println("Investment not found.");
+                return;
+            }
+
+            System.out.println("Investment found: " + investment.getName());
+
+            System.out.print("Enter new quantity: ");
+            double quantity = input.nextDouble();
+
+            System.out.print("Enter new purchase price: ");
+            double purchasePrice = input.nextDouble();
+
+            System.out.print("Enter new current price: ");
+            double currentPrice = input.nextDouble();
+
+            investment.setQuantity(quantity);
+            investment.setPurchasePrice(purchasePrice);
+            investment.setCurrentPrice(currentPrice);
+
+            System.out.println("Investment updated successfully.");
+        }
+
+	public static void SetUpdateInvestmentGoals(Customer customer) {
+
+            Scanner input = new Scanner(System.in);
+
+            System.out.println("\n--- Set / Update Investment Goal ---");
+
+            System.out.print("Enter goal description: ");
+            String description = input.nextLine();
+
+            System.out.print("Enter target amount: ");
+            double targetAmount = input.nextDouble();
+
+            InvestmentGoal goal =
+                    new InvestmentGoal(description, targetAmount);
+
+            customer.setInvestmentGoal(goal);
+
+            System.out.println("Investment goal saved successfully.");
+        }
+
+	public static void AddInvestmentsFromFile(Customer customer){
 	}
+
+	public static void ListAllInvestments(Customer customer) {
+
+            System.out.println("\n " + customer.getName()+ "'s Investments");
+
+            customer.getPortfolio().displayAllInvestments();
+        }
 	
+	public static void CalculatePortfolioValue(Customer customer){
+            double totalValue = customer.getPortfolio().calculateTotalValue();
+
+            System.out.println("\n----- Portfolio Value -----");
+
+            System.out.println("Customer: " + customer.getName());
+
+            System.out.printf(
+                "Total Portfolio Value: $%.2f%n",
+                totalValue
+            );
+        }
+        
 	public static void ExtraFunctionality(){
 		// To be completed. Feel free to change the input parameters. 
 	}

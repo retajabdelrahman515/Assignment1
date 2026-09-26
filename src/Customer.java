@@ -1,15 +1,15 @@
-
 public class Customer {
 
     private int customerID;
     private String name;
-    private Portfolio portfolio; // a customer has a portfolio
-    //private InvestmentGoal investmentGoal; when mariam is done
+    private Portfolio portfolio;
+    private InvestmentGoal investmentGoal;
 
     public Customer(int customerID, String name) {
         this.customerID = customerID;
         this.name = name;
         this.portfolio = new Portfolio();
+        this.investmentGoal = null;
     }
 
     public int getCustomerID() {
@@ -23,8 +23,7 @@ public class Customer {
     public Portfolio getPortfolio() {
         return portfolio;
     }
-    
-    /*
+
     public InvestmentGoal getInvestmentGoal() {
         return investmentGoal;
     }
@@ -32,5 +31,4 @@ public class Customer {
     public void setInvestmentGoal(InvestmentGoal investmentGoal) {
         this.investmentGoal = investmentGoal;
     }
-    */
 }

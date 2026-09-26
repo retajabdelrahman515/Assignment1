@@ -6,7 +6,7 @@ public class Bond extends Investment {
     private LocalDate maturityDate;
     private double faceValue; //the nominal value of the bond
 // constructor
-    public Bond(String symbol, String name, double quantity,  double purchasePrice, double currentPrice,  LocalDate purchaseDate, String riskLevel, double interestRate, LocalDate maturityDate,          double faceValue) {
+    public Bond(String symbol, String name, double quantity,  double purchasePrice, double currentPrice,  LocalDate purchaseDate, String riskLevel, double interestRate, LocalDate maturityDate,double faceValue) {
 
         super(symbol, name, quantity, purchasePrice,currentPrice, purchaseDate, riskLevel, "Bond");
 
