@@ -1,14 +1,12 @@
 import java.util.ArrayList;
 
-
  // Portfolio class stores and manages all investments.
   //It uses an ArrayList of Investment objects so it can store
   //different investment types 
  
 public class Portfolio {
 
-    // Stores all investments in the portfolio
-    private ArrayList<Investment> investments;
+    private ArrayList<Investment> investments; // Stores all investments in the portfolio
 
     // Constructor
     public Portfolio() {
@@ -16,6 +14,20 @@ public class Portfolio {
     }
 
     
+    public Investment findInvestment(String symbol) {
+
+        if (symbol == null) {
+            return null;
+        }
+
+        for (Investment investment : investments) {
+            if (investment.getSymbol() != null && investment.getSymbol().equalsIgnoreCase(symbol)) {
+                return investment;
+            }
+        }
+        return null;
+    }
+ 
     public boolean addInvestment(Investment investment) {
 
         if (investment == null) {
@@ -30,24 +42,6 @@ public class Portfolio {
         investments.add(investment);
         return true;
     }
-
-   
-    public Investment findInvestment(String symbol) {
-
-    if (symbol == null) {
-        return null;
-    }
-
-    for (Investment investment : investments) {
-
-        if (investment.getSymbol() != null
-                && investment.getSymbol().equalsIgnoreCase(symbol)) {
-            return investment;
-        }
-    }
-
-    return null;
-}
 
    
     public boolean removeInvestment(String symbol) {
@@ -83,9 +77,7 @@ public class Portfolio {
         }
 
         for (Investment investment : investments) {
-
             System.out.println(investment.getDetails());
-            System.out.println("-----------------------------");
         }
     }
 

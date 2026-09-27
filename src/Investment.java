@@ -9,13 +9,14 @@ public abstract class Investment implements Reportable {
     private double purchasePrice; //paid for one unit 
     private double currentPrice; //current price of one unit
     private LocalDate purchaseDate;
-    private String riskLevel;
+    private String riskLevel; // Low, Medium, High
     private String assetType; //type of the investment
 
    
      // Constructor 
      
-    public Investment(String symbol, String name, double quantity,  double purchasePrice, double currentPrice,   LocalDate purchaseDate, String riskLevel,    String assetType) {
+    public Investment(String symbol, String name, double quantity,  double purchasePrice, double currentPrice,
+            LocalDate purchaseDate, String riskLevel, String assetType) {
 
         this.symbol = symbol;
         this.name = name;
@@ -37,18 +38,17 @@ public abstract class Investment implements Reportable {
         return quantity * currentPrice;
     }
 
-    // Calculates the Return On Investment (ROI) percentage(loss or profit)
+    // Calculates the Return On Investment (ROI) percentage(loss (-) or profit (+))
     public double getROI() {
 
         double investmentAmount = getInvestmentAmount();
 
-        // check if the investment amount is zero,to prevent division by 0 
+        // check if the investment amount is zero,to prevent division by 0 - avoiding errors and exceptions
         if (investmentAmount == 0) {
             return 0;
         }
 
-        return ((getCurrentValue() - investmentAmount)
-                / investmentAmount) * 100;
+        return ((getCurrentValue() - investmentAmount) / investmentAmount) * 100;
     }
 
     // Getters

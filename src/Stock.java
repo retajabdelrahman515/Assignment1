@@ -7,9 +7,11 @@ public class Stock extends Investment {
     private double dividendPerShare;
 
     // Constructor
-    public Stock(String symbol, String name, double quantity,  double purchasePrice, double currentPrice, LocalDate purchaseDate, String riskLevel,  String exchange, double dividendPerShare) {
+    public Stock(String symbol, String name, double quantity,  double purchasePrice,
+            double currentPrice, LocalDate purchaseDate, String riskLevel,
+            String exchange, double dividendPerShare) {
 
-        // Call the parent Investment constructor
+        //Inherit from Investment superclass
         super(symbol, name, quantity, purchasePrice,currentPrice, purchaseDate, riskLevel, "Stock");
 
         this.exchange = exchange;

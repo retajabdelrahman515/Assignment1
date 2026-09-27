@@ -26,7 +26,9 @@ public class InvestmentGoal {
         this.targetAmount = targetAmount;
     }
 
-    // Calculates the remaining amount needed (deficit) to reach the goal
+    
+    // Calculate the remaining amount needed to reach the goal
+    
     public double calculateDeficit(double currentPortfolioValue) {
         double deficit = targetAmount - currentPortfolioValue;
         // If deficit is positive, return it; otherwise return 0 (goal reached)
@@ -37,7 +39,7 @@ public class InvestmentGoal {
         }
     }
 
-    // Calculates progress percentage and displays goal analysis with alert messages
+    //Display the Goals acheived by the user
     public void displayGoalAnalysis(double currentPortfolioValue) {
         double progressPct = 0.0;
         
@@ -50,24 +52,11 @@ public class InvestmentGoal {
         double deficit = calculateDeficit(currentPortfolioValue);
 
         // Print goal details and current status
-        System.out.println("\n--- Goal Deficit & Alert System ---");
+        System.out.println("\n--- Goal Analysis ---");
         System.out.println("Goal Description : " + description);
         System.out.printf("Target Amount    : $%.2f\n", targetAmount);
         System.out.printf("Portfolio Value  : $%.2f\n", currentPortfolioValue);
         System.out.printf("Progress         : %.2f%%\n", progressPct);
         System.out.printf("Remaining Deficit: $%.2f\n", deficit);
-
-        // Alert condition checks based on progress percentage
-        if (progressPct >= 100.0) {
-            System.out.println("Status:  Congratulations! You have fully achieved your financial goal!");
-        } else if (progressPct >= 75.0) {
-            System.out.println("Status: You are very close! You have achieved over 75% of your target.");
-        } else if (progressPct < 50.0) {
-            System.out.println("Status: Warning: You are under 50% of your target.");
-            System.out.println("Advice: Consider increasing monthly savings or reviewing your asset allocation.");
-        } else {
-            System.out.println("Status: Steady progress towards your target!");
-        }
-        System.out.println("------------------------------------\n");
     }
 }

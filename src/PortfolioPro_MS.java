@@ -8,8 +8,8 @@ import java.time.format.DateTimeParseException;
 public class PortfolioPro_MS {
 	public static void main(String[] args) {
         
-                
-            Customer customer1 = new Customer(2, "Aya"); // Customer Aya has an ID: 2
+            // Dummy Data 
+            Customer customer1 = new Customer(2, "Aya");
             
             customer1.getPortfolio().addInvestment(
                 new Stock(
@@ -203,8 +203,7 @@ public class PortfolioPro_MS {
             System.out.print("Enter investment symbol: ");
             String symbol = input.nextLine();
 
-            Investment investment =
-                    customer.getPortfolio().findInvestment(symbol);
+            Investment investment = customer.getPortfolio().findInvestment(symbol);
 
             if (investment == null) {
                 System.out.println("Investment not found.");
@@ -241,8 +240,7 @@ public class PortfolioPro_MS {
             System.out.print("Enter target amount: ");
             double targetAmount = input.nextDouble();
 
-            InvestmentGoal goal =
-                    new InvestmentGoal(description, targetAmount);
+            InvestmentGoal goal = new InvestmentGoal(description, targetAmount);
 
             customer.setInvestmentGoal(goal);
 
@@ -251,162 +249,132 @@ public class PortfolioPro_MS {
 
 	public static void AddInvestmentsFromFile(Customer customer) {
 
-    Scanner input = new Scanner(System.in);
+            Scanner input = new Scanner(System.in);
 
-    System.out.println("\n--- Bulk Add Investments From File ---");
-    System.out.print("Enter file path: ");
+            System.out.println("\n--- Bulk Add Investments From File ---");
+            System.out.print("Enter file path: ");
 
-    String filePath = input.nextLine();
+            String filePath = input.nextLine();
 
-    int addedCount = 0;
-    int skippedCount = 0;
-    int lineNumber = 0;
+            int addedCount = 0; //no. of investements added
+            int skippedCount = 0; //no. of investments rejected
+            int lineNumber = 0; // line currently processing 
 
-    try (BufferedReader reader =
-            new BufferedReader(new FileReader(filePath))) {
+            //Buffered reader easier than scanner
+            try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
 
-        String line;
+                String line; // variable to contain one line at a time
 
-        while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
+                    lineNumber++; // counter, to know which line we r on
+                    
+                    // Skip empty lines
+                    if (line.trim().isEmpty()) {
+                        continue;
+                    }
 
-            lineNumber++;
+                    try {
+                        Investment investment = createInvestmentFromFile(line);
+                        
+                        if (customer.getPortfolio().addInvestment(investment)) {
+                            addedCount++;
+                            
+                        } else {
+                            skippedCount++;
+                            System.out.println("Line " + lineNumber + " skipped: duplicate symbol.");
+                        }
 
-            // Skip empty lines
-            if (line.trim().isEmpty()) {
-                continue;
-            }
+                    } catch (NumberFormatException e) {
+                        skippedCount++;
+                        System.out.println("Line " + lineNumber + " skipped: invalid numeric value.");
 
-            try {
+                    } catch (DateTimeParseException e) {
+                        skippedCount++;
+                        System.out.println("Line " + lineNumber + " skipped: invalid date format.");
 
-                Investment investment =
-                        createInvestmentFromFile(line);
-
-                if (customer.getPortfolio()
-                        .addInvestment(investment)) {
-
-                    addedCount++;
-
-                } else {
-
-                    skippedCount++;
-
-                    System.out.println(
-                            "Line " + lineNumber
-                            + " skipped: duplicate symbol.");
+                    } catch (IllegalArgumentException e) {
+                        skippedCount++;
+                        System.out.println("Line " + lineNumber + " skipped: " + e.getMessage());
+                    }
                 }
 
-            } catch (NumberFormatException e) {
+                System.out.println("\nBulk addition completed.");
+                System.out.println("Investments added: " + addedCount);
+                System.out.println("Investments skipped: " + skippedCount);
 
-                skippedCount++;
-
-                System.out.println(
-                        "Line " + lineNumber
-                        + " skipped: invalid numeric value.");
-
-            } catch (DateTimeParseException e) {
-
-                skippedCount++;
-
-                System.out.println(
-                        "Line " + lineNumber
-                        + " skipped: invalid date format.");
-
-            } catch (IllegalArgumentException e) {
-
-                skippedCount++;
-
-                System.out.println(
-                        "Line " + lineNumber
-                        + " skipped: " + e.getMessage());
+            } catch (IOException e) {
+                System.out.println("Error reading the file: " + e.getMessage());
             }
         }
-
-        System.out.println("\nBulk addition completed.");
-        System.out.println("Investments added: " + addedCount);
-        System.out.println("Investments skipped: " + skippedCount);
-
-    } catch (IOException e) {
-
-        System.out.println(
-                "Error reading the file: " + e.getMessage());
-    }
-}
+        
+        
         public static Investment createInvestmentFromFile(String line) {
 
-    String[] data = line.split(",");
+            String[] data = line.split(",");
+            String type = data[0].trim();
 
-    String type = data[0].trim();
+            if (type.equalsIgnoreCase("Stock")) {
+                if (data.length != 10) {
+                    throw new IllegalArgumentException("Invalid Stock data.");
+                }
 
-    if (type.equalsIgnoreCase("Stock")) {
+                return new Stock(
+                        data[1].trim(),                        // symbol
+                        data[2].trim(),                        // name
+                        Double.parseDouble(data[3].trim()),    // quantity
+                        Double.parseDouble(data[4].trim()),    // purchase price
+                        Double.parseDouble(data[5].trim()),    // current price
+                        LocalDate.parse(data[6].trim()),       // purchase date
+                        data[7].trim(),                        // risk level
+                        data[8].trim(),                        // exchange
+                        Double.parseDouble(data[9].trim())     // dividend
+                );
 
-        if (data.length != 10) {
-            throw new IllegalArgumentException(
-                    "Invalid Stock data.");
+            } else if (type.equalsIgnoreCase("Bond")) {
+
+                if (data.length != 11) {
+                    throw new IllegalArgumentException("Invalid Bond data.");
+                }
+
+                return new Bond(
+                        data[1].trim(),                         // symbol
+                        data[2].trim(),                         // name
+                        Double.parseDouble(data[3].trim()),     // quantity
+                        Double.parseDouble(data[4].trim()),     // purchase price
+                        Double.parseDouble(data[5].trim()),     // current price
+                        LocalDate.parse(data[6].trim()),        // purchase date
+                        data[7].trim(),                         // risk level
+                        Double.parseDouble(data[8].trim()),     // interest rate
+                        LocalDate.parse(data[9].trim()),        // maturity date
+                        Double.parseDouble(data[10].trim())     // face value
+                );
+
+            } else if (type.equalsIgnoreCase("MutualFund") || type.equalsIgnoreCase("Mutual Fund")) {
+
+                if (data.length != 10) {
+                    throw new IllegalArgumentException("Invalid Mutual Fund data.");
+                }
+
+                return new MutualFund(
+                        data[1].trim(),                        // symbol
+                        data[2].trim(),                        // name
+                        Double.parseDouble(data[3].trim()),    // quantity
+                        Double.parseDouble(data[4].trim()),    // purchase price
+                        Double.parseDouble(data[5].trim()),    // current price
+                        LocalDate.parse(data[6].trim()),       // purchase date
+                        data[7].trim(),                        // risk level
+                        data[8].trim(),                        // fund manager
+                        Double.parseDouble(data[9].trim())     // expense ratio
+                );
+
+            } else {
+                throw new IllegalArgumentException("Unknown investment type: " + type);
+            }
         }
-
-        return new Stock(
-                data[1].trim(),                        // symbol
-                data[2].trim(),                        // name
-                Double.parseDouble(data[3].trim()),    // quantity
-                Double.parseDouble(data[4].trim()),    // purchase price
-                Double.parseDouble(data[5].trim()),    // current price
-                LocalDate.parse(data[6].trim()),       // purchase date
-                data[7].trim(),                        // risk level
-                data[8].trim(),                        // exchange
-                Double.parseDouble(data[9].trim())     // dividend
-        );
-
-    } else if (type.equalsIgnoreCase("Bond")) {
-
-        if (data.length != 11) {
-            throw new IllegalArgumentException(
-                    "Invalid Bond data.");
-        }
-
-        return new Bond(
-                data[1].trim(),                         // symbol
-                data[2].trim(),                         // name
-                Double.parseDouble(data[3].trim()),     // quantity
-                Double.parseDouble(data[4].trim()),     // purchase price
-                Double.parseDouble(data[5].trim()),     // current price
-                LocalDate.parse(data[6].trim()),        // purchase date
-                data[7].trim(),                         // risk level
-                Double.parseDouble(data[8].trim()),     // interest rate
-                LocalDate.parse(data[9].trim()),        // maturity date
-                Double.parseDouble(data[10].trim())     // face value
-        );
-
-    } else if (type.equalsIgnoreCase("MutualFund")
-            || type.equalsIgnoreCase("Mutual Fund")) {
-
-        if (data.length != 10) {
-            throw new IllegalArgumentException(
-                    "Invalid Mutual Fund data.");
-        }
-
-        return new MutualFund(
-                data[1].trim(),                        // symbol
-                data[2].trim(),                        // name
-                Double.parseDouble(data[3].trim()),    // quantity
-                Double.parseDouble(data[4].trim()),    // purchase price
-                Double.parseDouble(data[5].trim()),    // current price
-                LocalDate.parse(data[6].trim()),       // purchase date
-                data[7].trim(),                        // risk level
-                data[8].trim(),                        // fund manager
-                Double.parseDouble(data[9].trim())     // expense ratio
-        );
-
-    } else {
-
-        throw new IllegalArgumentException(
-                "Unknown investment type: " + type);
-    }
-}
 
 	public static void ListAllInvestments(Customer customer) {
 
             System.out.println("\n " + customer.getName()+ "'s Investments");
-
             customer.getPortfolio().displayAllInvestments();
         }
 	
@@ -414,13 +382,8 @@ public class PortfolioPro_MS {
             double totalValue = customer.getPortfolio().calculateTotalValue();
 
             System.out.println("\n----- Portfolio Value -----");
-
             System.out.println("Customer: " + customer.getName());
-
-            System.out.printf(
-                "Total Portfolio Value: $%.2f%n",
-                totalValue
-            );
+            System.out.printf("Total Portfolio Value: $%.2f%n", totalValue);
         }
         
 	public static void ExtraFunctionality(Customer customer) {
@@ -444,10 +407,6 @@ public class PortfolioPro_MS {
             int mediumRisk = 0;
             int highRisk = 0;
 
-            Investment bestInvestment = null;
-            Investment worstInvestment = null;
-
-
             // Analyze all investments
             for (Investment investment : portfolio.getInvestments()) {
 
@@ -456,47 +415,26 @@ public class PortfolioPro_MS {
                 totalValue += currentValue;
                 totalInvested += investment.getInvestmentAmount();
 
-
-                // Find best and worst investment based on ROI
-                if (bestInvestment == null ||
-                        investment.getROI() > bestInvestment.getROI()) {
-
-                    bestInvestment = investment;
-                }
-
-                if (worstInvestment == null ||
-                        investment.getROI() < worstInvestment.getROI()) {
-
-                    worstInvestment = investment;
-                }
-
-
                 // Calculate asset allocation
                 if (investment.getAssetType().equalsIgnoreCase("Stock")) {
-
                     stockValue += currentValue;
 
                 } else if (investment.getAssetType().equalsIgnoreCase("Bond")) {
-
                     bondValue += currentValue;
 
                 } else if (investment.getAssetType().equalsIgnoreCase("Mutual Fund")) {
-
                     mutualFundValue += currentValue;
                 }
 
 
-                // Analyze risk levels
+                // Risk levels
                 if (investment.getRiskLevel().equalsIgnoreCase("Low")) {
-
                     lowRisk++;
 
                 } else if (investment.getRiskLevel().equalsIgnoreCase("Medium")) {
-
                     mediumRisk++;
 
                 } else if (investment.getRiskLevel().equalsIgnoreCase("High")) {
-
                     highRisk++;
                 }
             }
@@ -504,7 +442,6 @@ public class PortfolioPro_MS {
 
             // Overall portfolio profit/loss
             double profitLoss = totalValue - totalInvested;
-
             double overallROI = 0;
 
             if (totalInvested > 0) {
@@ -512,14 +449,14 @@ public class PortfolioPro_MS {
             }
 
 
-            // Asset allocation percentages
+            // Assets in percentages
             double stockPercentage = (stockValue / totalValue) * 100;
             double bondPercentage = (bondValue / totalValue) * 100;
             double mutualFundPercentage = (mutualFundValue / totalValue) * 100;
 
 
             // Display results
-            System.out.println("\n========== PORTFOLIO HEALTH ANALYSIS ==========");
+            System.out.println("\n---- PORTFOLIO HEALTH ANALYSIS ----");
 
             System.out.println("Customer: " + customer.getName());
 
@@ -527,28 +464,6 @@ public class PortfolioPro_MS {
             System.out.printf("Current Value:  $%.2f%n", totalValue);
             System.out.printf("Profit/Loss:    $%.2f%n", profitLoss);
             System.out.printf("Overall ROI:    %.2f%%%n", overallROI);
-
-
-            System.out.println("\n---------- PERFORMANCE ----------");
-
-            System.out.println(
-                    "Best Performer: " + bestInvestment.getName()
-            );
-
-            System.out.printf(
-                    "ROI: %.2f%%%n",
-                    bestInvestment.getROI()
-            );
-
-            System.out.println(
-                    "Worst Performer: " + worstInvestment.getName()
-            );
-
-            System.out.printf(
-                    "ROI: %.2f%%%n",
-                    worstInvestment.getROI()
-            );
-
 
             System.out.println("\n---------- ASSET ALLOCATION ----------");
 
@@ -562,44 +477,11 @@ public class PortfolioPro_MS {
             System.out.println("Low Risk:    " + lowRisk);
             System.out.println("Medium Risk: " + mediumRisk);
             System.out.println("High Risk:   " + highRisk);
-
-
-            System.out.println("\n---------- HEALTH WARNINGS ----------");
-
-            if (stockPercentage > 70) {
-                System.out.println(
-                        "Warning: Portfolio is heavily concentrated in stocks."
-                );
-            }
-
-            if (bondPercentage > 70) {
-                System.out.println(
-                        "Warning: Portfolio is heavily concentrated in bonds."
-                );
-            }
-
-            if (mutualFundPercentage > 70) {
-                System.out.println(
-                        "Warning: Portfolio is heavily concentrated in mutual funds."
-                );
-            }
-
+            
             if (highRisk > portfolio.getNumberOfInvestments() / 2) {
-                System.out.println(
-                        "Warning: More than half of the investments are high risk."
+                System.out.println("Warning: More than half of the investments are high risk."
                 );
             }
-
-            if (stockValue == 0) {
-                System.out.println("Warning: No stock investments.");
-            }
-
-            if (bondValue == 0) {
-                System.out.println("Warning: No bond investments.");
-            }
-
-            if (mutualFundValue == 0) {
-                System.out.println("Warning: No mutual fund investments.");
-            }
+        
         }
 }
